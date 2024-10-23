@@ -9,8 +9,9 @@ app.post("/send", async (req, res) => {
     const messageText = req.body.message;
 
     // Webhook del bot
-    const webhookId = "4d6c0ee0-3443-4965-934a-ea6b93cb6423";
+    const webhookId = "4a7cef84-7df3-4f3e-bb65-258822647121";
     const apiUrl = `https://chat.botpress.cloud/${webhookId}`;
+
 
     try {
         // Conectarse al cliente del botpress

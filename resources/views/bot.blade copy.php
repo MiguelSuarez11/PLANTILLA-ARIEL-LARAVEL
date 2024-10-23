@@ -273,7 +273,8 @@
 
 
 
-    <div class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
+    <div
+        class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
         <!-- Contenedor principal que ocupa todo el espacio -->
         <div class="flex flex-col items-center flex-grow w-full h-full overflow-y-auto" id="mainContainer">
             <div class="w-full max-w-4xl mt-24 text-center" id="chatContent">
@@ -293,324 +294,323 @@
                     <!-- Aquí se mostrarán los mensajes de la conversación -->
                 </div>
 
-                <!-- Contenedor para el audio -->
-                <audio id="botAudio" controls style="display: none;"></audio>
+                <style>
+                    .no-scrollbar::-webkit-scrollbar {
+                        display: none;
+                    }
+
+                    .no-scrollbar {
+                        -ms-overflow-style: none;
+                        scrollbar-width: none;
+                    }
+
+                    #conversation {
+                        -webkit-overflow-scrolling: touch;
+                    }
+                </style>
             </div>
 
-            <style>
-                /* Oculta la barra de desplazamiento pero mantiene el scroll funcional */
-                .no-scrollbar::-webkit-scrollbar {
-                    display: none;
-                    /* Oculta la barra en navegadores basados en WebKit (Chrome, Safari, etc.) */
-                }
+            <div class="fixed bottom-0 w-full max-w-full px-2 mx-auto mb-4 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-4xl"
+                id="chatBox">
+                <form id="chatForm">
+                    <label for="chat" class="sr-only">Escribe tu mensaje aquí...</label>
+                    <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <textarea id="chat" rows="1"
+                            class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Escribe tu mensaje..."></textarea>
 
-                .no-scrollbar {
-                    -ms-overflow-style: none;
-                    /* Oculta la barra en Internet Explorer y Edge */
-                    scrollbar-width: none;
-                    /* Oculta la barra en Firefox */
-                }
+                        <!-- Botón para activar/desactivar el procesamiento de audio -->
+                        <button type="button" id="audioButton"
+                            class="ml-2 inline-flex justify-center p-2 text-gray-600 rounded-full cursor-pointer hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-600">
+                            <svg id="audioIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                    d="M6.9 12q0 .225-.025.463t-.075.462q-.075.425.1.813t.575.537t.763-.025t.462-.575t.15-.825t.05-.85t-.05-.85t-.15-.825t-.462-.575t-.763-.025t-.575.538t-.1.812q.05.225.075.463T6.9 12m3.5 0q0 .6-.075 1.175T10.1 14.3q-.125.425.038.8t.537.525q.4.175.787-.012t.513-.613q.225-.725.325-1.475T12.4 12t-.1-1.525T11.975 9q-.125-.425-.512-.612t-.788-.013q-.375.15-.537.525t-.038.8q.15.55.225 1.125T10.4 12m3.5 0q0 .925-.125 1.813t-.4 1.737q-.125.425.013.825t.537.575t.787 0t.513-.6q.35-1.05.512-2.125T15.9 12t-.163-2.225t-.512-2.125q-.125-.425-.513-.6t-.787 0t-.538.575t-.012.825q.275.85.4 1.738T13.9 12M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8" />
+                            </svg>
+                        </button>
+                        <button type="submit"
+                            class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path
+                                    d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
+                            </svg>
+                            <span class="sr-only">Enviar mensaje</span>
+                        </button>
 
-                /* Ajustes adicionales para mejorar la experiencia de scroll */
-                #conversation {
-                    -webkit-overflow-scrolling: touch;
-                    /* Mejora el scroll en dispositivos móviles */
-                }
-            </style>
-        </div>
 
-        <!-- Caja de entrada de mensajes estilizada -->
-        <div
-            class="fixed bottom-0 w-full max-w-full px-2 mx-auto mb-4 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-4xl"
-            id="chatBox">
-            <form id="chatForm">
-                <label for="chat" class="sr-only">Escribe tu mensaje aquí...</label>
-                <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <textarea id="chat" rows="1"
-                        class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Escribe tu mensaje..."></textarea>
-                    <button type="submit"
-                        class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                        <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                            <path
-                                d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
-                        </svg>
-                        <span class="sr-only">Enviar mensaje</span>
-                    </button>
-                </div>
-                <div>
-                    <label for="audioCheckbox">
-                        <input type="checkbox" id="audioCheckbox" name="processAudio" value="true" checked>
-                        Procesar audio
-                    </label>
-                </div>
-            </form>
-        </div>
+                    </div>
 
-        <audio id="botAudio" controls style="display: none;"></audio>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const chatForm = document.getElementById('chatForm');
-                const chatTextarea = document.getElementById('chat');
-                const conversation = document.getElementById('conversation');
-                const chatContent = document.getElementById('chatContent'); // Contenedor del contenido del chat
-                const conversationContainer = document.querySelector(
-                    '[data-simplebar]'); // Contenedor de la conversación
-                const botAudio = document.getElementById('botAudio');
-                const audioCheckbox = document.getElementById('audioCheckbox');
-                let botResponseElement;
-                let fullResponse = '';
-                let currentIndex = 0;
-                let isBotResponding = false;
+                </form>
 
-                // Ajustar el tamaño del textarea al escribir
-                chatTextarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 128) +
-                        'px'; // Ajustar dinámicamente la altura
-                });
 
-                function scrollToBottom() {
-                    const conversationContainer = document.getElementById('conversation');
-                    conversationContainer.scrollTop = conversationContainer.scrollHeight;
-                }
 
-                function formatBotResponse(response) {
-                    const lines = response.split('\n');
-                    let formattedResponse = '';
 
-                    lines.forEach(line => {
-                        if (line.match(/^\d+\./)) {
-                            formattedResponse += `<li>${line.substring(line.indexOf(' ') + 1).trim()}</li>`;
-                        } else if (line.startsWith('Preguntas de seguimiento:')) {
-                            formattedResponse += `<h4 class="mt-4 font-bold">${line.trim()}</h4>`;
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const chatForm = document.getElementById('chatForm');
+                    const chatTextarea = document.getElementById('chat');
+                    const conversation = document.getElementById('conversation');
+                    const audioCheckbox = document.getElementById('audioCheckbox');
+                    let isBotResponding = false;
+                    let processAudio = true; // Estado inicial: se procesa audio
+                    const audioButton = document.getElementById('audioButton');
+                    const audioIcon = document.getElementById('audioIcon');
+
+                    // Alternar el estado de procesar audio y el ícono
+                    audioButton.addEventListener('click', function() {
+                        processAudio = !processAudio;
+
+                        if (processAudio) {
+                            // Mostrar ícono de audio activado
+                            audioIcon.innerHTML = `
+                            <path fill="currentColor" d="M6.9 12q0 .225-.025.463t-.075.462q-.075.425.1.813t.575.537t.763-.025t.462-.575t.15-.825t.05-.85t-.05-.85t-.15-.825t-.462-.575t-.763-.025t-.575.538t-.1.812q.05.225.075.463T6.9 12m3.5 0q0 .6-.075 1.175T10.1 14.3q-.125.425.038.8t.537.525q.4.175.787-.012t.513-.613q.225-.725.325-1.475T12.4 12t-.1-1.525T11.975 9q-.125-.425-.512-.612t-.788-.013q-.375.15-.537.525t-.038.8q.15.55.225 1.125T10.4 12m3.5 0q0 .925-.125 1.813t-.4 1.737q-.125.425.013.825t.537.575t.787 0t.513-.6q.35-1.05.512-2.125T15.9 12t-.163-2.225t-.512-2.125q-.125-.425-.513-.6t-.787 0t-.538.575t-.012.825q.275.85.4 1.738T13.9 12M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"/>
+                             `;
                         } else {
-                            formattedResponse += `<p>${line.trim()}</p>`;
+                            // Mostrar ícono de audio desactivado (con una "X")
+                            audioIcon.innerHTML = `
+                            <path fill="currentColor" d="M13.9 16.925q-.35-.15-.525-.513t-.05-.737q.175-.475.288-.962t.162-.988L15.5 15.45q-.05.225-.125.463t-.15.462q-.125.4-.513.563t-.812-.013m-3.225-1.3q-.375-.15-.537-.513t-.038-.787q.175-.575.238-1.15T10.4 12q0-.475-.025-.925t-.125-.875l2.15 2.15q-.025.7-.137 1.388t-.313 1.337q-.125.375-.5.538t-.775.012m-3.25-1.375q-.35-.15-.525-.5T6.8 13q.05-.25.075-.5T6.9 12t-.025-.5T6.8 11q-.075-.4.1-.763t.525-.487q.425-.175.8 0t.475.6q.1.4.15.813T8.9 12t-.05.838t-.15.812q-.1.425-.475.6t-.8 0m8.45-1.275l-2-2q-.05-.7-.2-1.362t-.35-1.288q-.125-.375.038-.737t.512-.513q.425-.2.825-.025t.525.575q.35 1.05.513 2.138T15.9 12v.488q0 .237-.025.487M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12q0-1.55.425-2.937T3.65 6.475L1.4 4.2q-.3-.3-.3-.712t.3-.713t.713-.3t.712.3L21.2 21.15q.3.3.3.713t-.3.712t-.712.3t-.713-.3l-2.25-2.225q-1.2.8-2.587 1.225T12 22m0-2q1.125 0 2.138-.3t1.912-.825L5.125 7.95q-.525.9-.825 1.912T4 12q0 3.325 2.338 5.663T12 20M7.85 2.9q.975-.45 2.025-.675T12 2q2 0 3.825.75t3.25 2.175t2.175 3.25T22 12q0 1.075-.225 2.125T21.1 16.15q-.175.375-.575.488t-.75-.088t-.475-.6t.05-.8q.325-.75.487-1.55T20 12q0-3.35-2.325-5.675T12 4q-.8 0-1.6.162t-1.55.488q-.4.175-.8.05t-.6-.475t-.088-.75t.488-.575"/>
+                            `;
                         }
                     });
 
-                    if (formattedResponse.includes('<li>')) {
-                        formattedResponse = `<ol class="ml-6 list-decimal">${formattedResponse}</ol>`;
+                    function scrollToBottom() {
+                        conversation.scrollTop = conversation.scrollHeight;
                     }
 
-                    return formattedResponse;
-                }
+                    function disableUserInput() {
+                        chatTextarea.disabled = true;
+                    }
 
-                function simulateTyping() {
-                    if (currentIndex < fullResponse.length) {
-                        let nextChar = fullResponse.charAt(currentIndex);
+                    function enableUserInput() {
+                        chatTextarea.disabled = false;
+                    }
 
-                        if (nextChar === '<') {
-                            const tagEnd = fullResponse.indexOf('>', currentIndex) + 1;
-                            nextChar = fullResponse.substring(currentIndex, tagEnd);
-                            currentIndex = tagEnd;
-                        } else {
-                            currentIndex++;
+                    function formatBotResponse(response) {
+                        return response.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n/g, "<br>");
+                    }
+
+                    function typeResponse(element, response, speed) {
+                        let i = 0;
+
+                        function type() {
+                            if (i < response.length) {
+                                element.innerHTML += response.charAt(i);
+                                i++;
+                                setTimeout(type, speed);
+                                scrollToBottom();
+                            } else {
+                                enableUserInput(); // Habilitamos el input del usuario cuando termina la respuesta
+                            }
                         }
+                        type();
+                    }
 
-                        // Agregar el siguiente carácter al elemento de respuesta del bot
-                        botResponseElement.querySelector('.bot-response').innerHTML += nextChar;
+                    function sendMessage() {
+                        if (isBotResponding) return;
+
+                        const userMessage = chatTextarea.value.trim();
+
+                        // Utilizamos el estado global `processAudio` en lugar de `audioCheckbox`
+                        const processAudioState = processAudio ? 'true' : 'false';
+
+                        if (!userMessage) return;
+
+                        chatTextarea.value = '';
+                        chatTextarea.style.height = 'auto';
+
+                        chatContent.style.display = 'none';
+                        conversationContainer.style.display = 'block';
+
+                        // Agregar el mensaje del usuario a la conversación
+                        conversation.innerHTML += `
+                        <div class="flex justify-end my-2">
+                            <div class="w-auto max-w-xl p-3 text-white bg-blue-500 rounded-lg">
+                                ${userMessage}
+                            </div>
+                        </div>`;
+
                         scrollToBottom();
 
-                        setTimeout(simulateTyping, 19); // Velocidad de escritura
-                    } else {
-                        isBotResponding = false; // Habilitar la entrada de mensajes cuando el bot termina de responder
-                        enableUserInput();
-                    }
-                }
-
-                function disableUserInput() {
-                    chatTextarea.disabled = true;
-                }
-
-                function enableUserInput() {
-                    chatTextarea.disabled = false;
-                }
-
-                function sendMessage() {
-                    if (isBotResponding) return; // No permitir el envío si el bot está respondiendo
-
-                    const userMessage = chatTextarea.value.trim();
-                    const processAudio = audioCheckbox.checked ? 'true' : 'false'; // Enviar el estado del checkbox
-
-                    if (!userMessage) return;
-
-                    chatTextarea.value = '';
-                    chatTextarea.style.height = 'auto';
-
-                    // Ocultar el contenido del chat y mostrar la conversación al enviar el mensaje
-                    chatContent.style.display = 'none'; // Ocultar el contenido del chat
-                    conversationContainer.style.display = 'block'; // Mostrar la conversación
-
-                    // Mensaje del usuario en la derecha
-                    conversation.innerHTML += `
-                    <div class="flex justify-end my-2">
-                        <div class="w-auto max-w-xs p-3 text-white bg-blue-500 rounded-lg">
-                            ${userMessage}
-                        </div>
-                    </div>`;
-
-                        // Añadir el mensaje temporal "El bot está escribiendo..."
-                        botResponseElement = document.createElement('div');
+                        const botResponseElement = document.createElement('div');
                         botResponseElement.classList.add('bot-message');
                         botResponseElement.innerHTML = `
                         <div class="flex justify-start my-2">
                             <div class="w-auto max-w-xl p-3 text-black bg-gray-300 rounded-lg bot-response">
-                                <span>El bot está escribiendo...</span> <!-- Texto temporal -->
+                                <span>El bot está escribiendo...</span>
                             </div>
-                        </div> `;
+                        </div>`;
                         conversation.appendChild(botResponseElement);
+                        scrollToBottom();
+                        disableUserInput();
+                        isBotResponding = true;
 
-                    scrollToBottom(); // Hacer scroll hacia abajo cuando se añade el mensaje
-
-                    // Deshabilitar la entrada mientras el bot responde
-                    disableUserInput();
-                    isBotResponding = true;
-
-                    fetch('/chat', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                message: userMessage,
-                                processAudio: processAudio // Incluir el valor del checkbox en la solicitud
+                        // Enviar el mensaje al backend
+                        fetch('/chat', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    message: userMessage,
+                                    processAudio: processAudioState // Estado del procesamiento de audio
+                                })
                             })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            fullResponse = formatBotResponse(data.response); // Formatear la respuesta del bot
+                            .then(response => response.json())
+                            .then(data => {
+                                // Limpiar el div del bot "escribiendo"
+                                botResponseElement.remove();
 
-                            // Eliminar el texto "El bot está escribiendo..."
-                            botResponseElement.querySelector('.bot-response').innerHTML = '';
+                                if (data.response && data.response.length > 0) {
+                                    const botMessages = Array.isArray(data.response) ? data.response : [data.response];
 
-                            // Simular la escritura de la respuesta del bot
-                            currentIndex = 0; // Reiniciar el índice de caracteres
-                            setTimeout(() => {
-                                simulateTyping(); // Iniciar la simulación de escritura
-                            }, 1000); // Esperar 1 segundo antes de mostrar la respuesta
+                                    botMessages.forEach((message) => {
+                                        const formattedMessage = formatBotResponse(message);
 
-                            // Mostrar el audio si existe
-                            if (data.audioUrl) {
-                                botAudio.src = data.audioUrl;
-                                botAudio.style.display = 'block';
-                                botAudio.play();
-                            }
+                                        const newBotMessage = document.createElement('div');
+                                        newBotMessage.classList.add('flex', 'justify-start', 'my-2');
+                                        newBotMessage.innerHTML = `
+                                        <div class="w-auto max-w-xl p-3 text-black bg-gray-300 rounded-lg bot-response">
+                                            <span class="typing-effect"></span>
+                                        </div>`;
 
-                            scrollToBottom(); // Hacer scroll hacia abajo cuando se añade la respuesta del bot
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            isBotResponding = false;
-                            enableUserInput(); // Volver a habilitar la entrada en caso de error
-                        });
-                }
+                                        conversation.appendChild(newBotMessage);
 
-                // Enviar mensaje al presionar Enter
-                chatTextarea.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        // Simular el efecto de tipeo
+                                        const typingElement = newBotMessage.querySelector('.typing-effect');
+                                        typeResponse(typingElement, formattedMessage,
+                                            30); // velocidad de tipeo: 30ms por carácter
+
+                                        // Si el backend proporciona una URL de audio, reproducir el audio
+                                        if (data.audioUrl) {
+                                            // Crear el elemento de audio
+                                            const audioElement = document.createElement('audio');
+                                            audioElement.controls = true;
+                                            audioElement.src = data.audioUrl;
+
+                                            // Crear un contenedor para el audio que ocupe toda la fila
+                                            const audioContainer = document.createElement('div');
+                                            audioContainer.classList.add('w-full',
+                                            'my-2'); // Asegura que el audio se muestre en una nueva fila
+
+                                            // Insertar el elemento de audio dentro del contenedor
+                                            audioContainer.appendChild(audioElement);
+
+                                            // Insertar el contenedor de audio justo después del mensaje del bot
+                                            conversation.appendChild(audioContainer);
+
+                                            // Reproducir el audio automáticamente
+                                            audioElement.play();
+                                        }
+
+                                    });
+                                } else {
+                                    conversation.innerHTML += `
+                <div class="flex justify-start my-2">
+                    <div class="w-auto max-w-xl p-3 text-red-500 bg-gray-300 rounded-lg bot-response">
+                        No encontré una respuesta relacionada a tu pregunta, por favor reformúlala.
+                    </div>
+                </div>`;
+                                }
+
+                                scrollToBottom();
+                                isBotResponding = false;
+                                enableUserInput();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                botResponseElement.querySelector('.bot-response').innerHTML =
+                                    'Ocurrió un error. Inténtalo de nuevo más tarde.';
+                                isBotResponding = false;
+                                enableUserInput();
+                            });
+                    }
+
+
+
+                    chatTextarea.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    });
+
+                    chatForm.addEventListener('submit', function(e) {
                         e.preventDefault();
                         sendMessage();
-                    }
+                    });
                 });
+            </script>
+        </div>
 
-                // Enviar mensaje al hacer clic en el botón de enviar
-                chatForm.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Evitar que el formulario se recargue
-                    sendMessage();
-                });
-            });
+
+
+
+
+
+
+
+
+
+
+
+        <script>
+            const sidebar = document.querySelector("aside");
+            const maxSidebar = document.querySelector(".max")
+            const miniSidebar = document.querySelector(".mini")
+            const roundout = document.querySelector(".roundout")
+            const maxToolbar = document.querySelector(".max-toolbar")
+            const logo = document.querySelector('.logo')
+            const content = document.querySelector('.content')
+            const moon = document.querySelector(".moon")
+            const sun = document.querySelector(".sun")
+
+            function setDark(val) {
+                if (val === "dark") {
+                    document.documentElement.classList.add('dark')
+                    moon.classList.add("hidden")
+                    sun.classList.remove("hidden")
+                } else {
+                    document.documentElement.classList.remove('dark')
+                    sun.classList.add("hidden")
+                    moon.classList.remove("hidden")
+                }
+            }
+
+            function openNav() {
+                if (sidebar.classList.contains('-translate-x-48')) {
+                    // max sidebar
+                    sidebar.classList.remove("-translate-x-48")
+                    sidebar.classList.add("translate-x-none")
+                    maxSidebar.classList.remove("hidden")
+                    maxSidebar.classList.add("flex")
+                    miniSidebar.classList.remove("flex")
+                    miniSidebar.classList.add("hidden")
+                    maxToolbar.classList.add("translate-x-0")
+                    maxToolbar.classList.remove("translate-x-24", "scale-x-0")
+                    logo.classList.remove("ml-12")
+                    content.classList.remove("ml-12")
+                    content.classList.add("ml-12", "md:ml-60")
+                } else {
+                    // mini sidebar
+                    sidebar.classList.add("-translate-x-48")
+                    sidebar.classList.remove("translate-x-none")
+                    maxSidebar.classList.add("hidden")
+                    maxSidebar.classList.remove("flex")
+                    miniSidebar.classList.add("flex")
+                    miniSidebar.classList.remove("hidden")
+                    maxToolbar.classList.add("translate-x-24", "scale-x-0")
+                    maxToolbar.classList.remove("translate-x-0")
+                    logo.classList.add('ml-12')
+                    content.classList.remove("ml-12", "md:ml-60")
+                    content.classList.add("ml-12")
+
+                }
+
+            }
         </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
-
-
-
-
-
-
-
-
-
-        <!-- JavaScript para cambiar el contenido dinámico -->
-    </div>
-
-
-
-
-
-    <script>
-        const sidebar = document.querySelector("aside");
-        const maxSidebar = document.querySelector(".max")
-        const miniSidebar = document.querySelector(".mini")
-        const roundout = document.querySelector(".roundout")
-        const maxToolbar = document.querySelector(".max-toolbar")
-        const logo = document.querySelector('.logo')
-        const content = document.querySelector('.content')
-        const moon = document.querySelector(".moon")
-        const sun = document.querySelector(".sun")
-
-        function setDark(val) {
-            if (val === "dark") {
-                document.documentElement.classList.add('dark')
-                moon.classList.add("hidden")
-                sun.classList.remove("hidden")
-            } else {
-                document.documentElement.classList.remove('dark')
-                sun.classList.add("hidden")
-                moon.classList.remove("hidden")
-            }
-        }
-
-        function openNav() {
-            if (sidebar.classList.contains('-translate-x-48')) {
-                // max sidebar
-                sidebar.classList.remove("-translate-x-48")
-                sidebar.classList.add("translate-x-none")
-                maxSidebar.classList.remove("hidden")
-                maxSidebar.classList.add("flex")
-                miniSidebar.classList.remove("flex")
-                miniSidebar.classList.add("hidden")
-                maxToolbar.classList.add("translate-x-0")
-                maxToolbar.classList.remove("translate-x-24", "scale-x-0")
-                logo.classList.remove("ml-12")
-                content.classList.remove("ml-12")
-                content.classList.add("ml-12", "md:ml-60")
-            } else {
-                // mini sidebar
-                sidebar.classList.add("-translate-x-48")
-                sidebar.classList.remove("translate-x-none")
-                maxSidebar.classList.add("hidden")
-                maxSidebar.classList.remove("flex")
-                miniSidebar.classList.add("flex")
-                miniSidebar.classList.remove("hidden")
-                maxToolbar.classList.add("translate-x-24", "scale-x-0")
-                maxToolbar.classList.remove("translate-x-0")
-                logo.classList.add('ml-12')
-                content.classList.remove("ml-12", "md:ml-60")
-                content.classList.add("ml-12")
-
-            }
-
-        }
-    </script>
 
 </html>
